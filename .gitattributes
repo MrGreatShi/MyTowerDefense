@@ -1,0 +1,25 @@
+* text=auto
+*.cs text eol=lf
+*.shader text eol=lf
+*.cginc text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.meta text eol=lf
+*.unity text eol=lf
+*.prefab text eol=lf
+*.mat text eol=lf
+*.asset -text
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.tga binary
+*.psd binary
+*.fbx binary
+*.blend binary
+*.max binary
+*.wav binary
+*.mp3 binary
+*.ogg binary
+*.ttf binary
+*.otf binary

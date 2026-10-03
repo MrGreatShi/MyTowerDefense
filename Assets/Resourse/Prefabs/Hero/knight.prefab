@@ -1,0 +1,207 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &1768828866359178248
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.45
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.45
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      propertyPath: m_Name
+      value: knight
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      propertyPath: m_TagString
+      value: Hero
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 4fbdef2caa23eba4688ee1e5a3842617, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1365750706723975708}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1376912301416215138}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -5828010361680516173}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7909317990782793091}
+  m_SourcePrefab: {fileID: 100100000, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+--- !u!1 &1462910848984320345 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b548e90d3ec83544b88102cc5bfc8a9c, type: 3}
+  m_PrefabInstance: {fileID: 1768828866359178248}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1365750706723975708
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1462910848984320345}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Height: 5
+  m_Direction: 1
+  m_Center: {x: 0, y: 2.5, z: 0}
+--- !u!114 &1376912301416215138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1462910848984320345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf31ed9df5d1c8640ab3a472aaa8236b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: Knight
+  health: 101
+  maxHealth: 200
+  physicalDefense: 10
+  magicDefense: 10
+  attack: 10
+  attackRange: 2
+  defaultMoveSpeed: 2
+  movingSpeed: 0
+  state: 1
+  passiveSkillCooldown:
+  - 10
+  - 10
+  - 10
+  passiveSkillFactor: 0a0000001400000028000000
+  passiveSkillUpgradeCost: 0a000000140000001e000000
+  passiveSkillLevel: 0
+  activeSkillCooldown:
+  - 20
+  - 15
+  - 10
+  activeSkillFactor: 05000000070000000a000000
+  activeSkillUpgradeCost: 0f0000001900000023000000
+  activeSkillLevel: 0
+  ultimateCooldown:
+  - 30
+  - 25
+  - 20
+  ultimateFactor: 0a000000140000001e000000
+  ultimateUpgradeCost: 140000001e00000028000000
+  ultimateLevel: 0
+  reviveTime: 5
+  preState: 0
+  NeedTargetForA_Skill: 0
+  NeedTargetForUltimate: 0
+  ultimateEffect: {fileID: 0}
+  _ultimateDuration: 5
+  _ultimateInterval: 1
+  _ultimateCanApplyToFrozenCube: 1
+--- !u!114 &-5828010361680516173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1462910848984320345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85ff0201890322c479ae5a83032cd695, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isSelectable: 1
+  highlighter: {fileID: 0}
+--- !u!114 &7909317990782793091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1462910848984320345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90cc167c747d6ce4e90ad74ab530cec5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetRenderers: []
+  hoverColor: {r: 1, g: 1, b: 0, a: 1}
+  selectedColor: {r: 1, g: 0.85, b: 0.1, a: 1}
+  validTargetColor: {r: 0.2, g: 1, b: 0.3, a: 1}
+  invalidTargetColor: {r: 1, g: 0.2, b: 0.2, a: 1}
+  colorBlend: 0.45
+  emissionIntensity: 0.6

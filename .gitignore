@@ -1,0 +1,42 @@
+# Unity generated files
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Bb]uild/
+/[Bb]uilds/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+/lfs/
+# IDE and local assistant settings
+.vs/
+.idea/
+.vscode/
+.cursor/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+# OS and local secrets
+.DS_Store
+Thumbs.db
+Desktop.ini
+.env
+.env.*
+!.env.example
+# Unity generated asset data
+/Assets/AssetStoreTools*
+/Assets/AddressableAssetsData/*/*.bin*
+/Assets/StreamingAssets/aa.meta
+/Assets/StreamingAssets/aa/
+crashlytics-build.properties

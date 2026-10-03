@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Mage
+  m_EditorClassIdentifier: 
+  m_GroupName: Mage
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 9ad2742d786dac54e83131f0cba3beef
+  m_SerializeEntries:
+  - m_GUID: 2775a591ec3a7d44db0c36a25886aa97
+    m_Address: Mage_PassiveSkill
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3db848ecf8d7052479677a7ce6fceb0d
+    m_Address: Mage_Ultimate
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6c4a106449fb1804693a307efb553f8b
+    m_Address: Mage_Prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f6c8149b112f0534eb0b24e60cfa269a
+    m_Address: Mage_ActiveSkill
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fa8b529ec4c7bf348ab0a0541d1b2b7c
+    m_Address: Mage_Portrait
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 5e611f84b4f783e4fa28f55cb937abbc, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: af0646a28baafea41836e8a96a9d2e8b, type: 2}
+    - {fileID: 11400000, guid: ffa3e477b6e637d4488528b812ff7560, type: 2}

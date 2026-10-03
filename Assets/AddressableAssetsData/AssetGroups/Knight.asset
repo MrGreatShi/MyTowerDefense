@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Knight
+  m_EditorClassIdentifier: 
+  m_GroupName: Knight
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 524d3c0161b273c4a94971e5a2bc8a02
+  m_SerializeEntries:
+  - m_GUID: 3555e8695e359f94285c544aab2158b5
+    m_Address: Knight_Prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f1a16497f12a50e4e86701884ca1cae1
+    m_Address: Knight_Ultimate_Effect
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 5e611f84b4f783e4fa28f55cb937abbc, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: f788dc16e7395324188c5ce85030f133, type: 2}
+    - {fileID: 11400000, guid: 3aff793c4a71d4b438327f2d72932656, type: 2}
