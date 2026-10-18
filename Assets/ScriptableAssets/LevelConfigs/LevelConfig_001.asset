@@ -18,7 +18,7 @@ MonoBehaviour:
   levelType: 0
   heartCount: 3
   originalGold: 400
-  sceneName: SampleScene
+  sceneName: LevelScene
   nextLevelId: 0
   BOSSName: 
   enemies:

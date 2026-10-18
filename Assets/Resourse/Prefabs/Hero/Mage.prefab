@@ -740,7 +740,7 @@ MonoBehaviour:
   health: 0
   maxHealth: 100
   physicalDefense: 5
-  magicDefense: 10
+  magicDefense: 20
   attack: 15
   attackRange: 20
   defaultMoveSpeed: 1

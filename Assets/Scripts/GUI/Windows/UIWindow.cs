@@ -1,10 +1,10 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public enum UILayer { Background, Normal, Popup, Top }
 
 public abstract class UIWindow : MonoBehaviour
 {
-    /// <summary>Addressables key£¬ÀıÈç "UI/MainMenuWindow"</summary>
+    /// <summary>Addressables èµ„æºåœ°å€ï¼Œä¾‹å¦‚ "UI/MainWindow"ã€‚</summary>
     public abstract string Key { get; }
 
     public virtual UILayer Layer => UILayer.Normal;

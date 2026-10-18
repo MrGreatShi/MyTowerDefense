@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// 定义可被玩家选择的对象。
@@ -9,7 +9,7 @@ public interface ISelectable
 {
     /// <summary>对象当前是否允许被选择。</summary>
     bool IsSelectable { get; }
-    /// <summary>选择器在子 Collider 命中时会回到此根节点，作为选择的目标对象。
+    /// <summary>选中对象的根节点，用于高亮和交互。</summary>
     Transform SelectionRoot { get; }
     /// <summary>更新由选择系统驱动的视觉状态。</summary>
     void SetVisualState(SelectionVisualState state);
