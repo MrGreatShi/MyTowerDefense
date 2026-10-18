@@ -22,8 +22,23 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 86b8718d4bb39c2478914f6cf0910d45
+    m_Address: UI/LevelPrepareWindow
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 88f00b79f3a10554fad4f7c8f5cbd11e
     m_Address: UI/LevelHeroWindow
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9aa5b8c5f547b784b8ed34b718b20e60
+    m_Address: UI/MainWindow
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c16ad5c941b46cf49a8743f34622eb8a
+    m_Address: UI/HeroDetailWindow
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

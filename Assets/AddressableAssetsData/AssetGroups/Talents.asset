@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Talents
+  m_EditorClassIdentifier: 
+  m_GroupName: Talents
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 3dde1975ab56e334385336dd40720c7b
+  m_SerializeEntries:
+  - m_GUID: 0bfc2c9aa7ca60240820a496f0abfe32
+    m_Address: Talent_31
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1ab979a718f001b4081326326fdaeb9a
+    m_Address: Talent_21
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 30cf31b94dc4e2c4ca86ef0aca5a3b1d
+    m_Address: Talent_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 34645b2ded0852f4fb12add1f4f1d526
+    m_Address: Talent_00
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5980a4f6ba484b949ae32e657db4d93f
+    m_Address: Talent_11
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 64da8a1415c35574d82aa4fce4ea71ed
+    m_Address: Talent_10
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 76aa91949dba473489ce59175f282e28
+    m_Address: Talent_20
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b0b954274f930404d95d851e923346a6
+    m_Address: Talent_30
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 5e611f84b4f783e4fa28f55cb937abbc, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 7bd358efb3c285b4aae6cf95d60bf48f, type: 2}
+    - {fileID: 11400000, guid: 576b68d0470d15a4a8be4948e7fcc60e, type: 2}

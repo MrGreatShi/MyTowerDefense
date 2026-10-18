@@ -17,7 +17,7 @@ MonoBehaviour:
   levelDescription: "\u7B2C\u4E00\u5173"
   levelType: 0
   heartCount: 3
-  originalGold: 600
+  originalGold: 400
   sceneName: SampleScene
   nextLevelId: 0
   BOSSName: 
@@ -25,12 +25,21 @@ MonoBehaviour:
   - PinkGhost
   - BlueGhost
   waves:
-  - waveStartTime: 1
+  - waveStartTime: 5
     enemyName: PinkGhost
     count: 1
-  - waveStartTime: 4
+  - waveStartTime: 15
     enemyName: PinkGhost
-    count: 2
-  - waveStartTime: 4
+    count: 1
+  - waveStartTime: 25
     enemyName: BlueGhost
     count: 1
+  - waveStartTime: 25
+    enemyName: PinkGhost
+    count: 1
+  - waveStartTime: 35
+    enemyName: BlueGhost
+    count: 1
+  - waveStartTime: 35
+    enemyName: PinkGhost
+    count: 2

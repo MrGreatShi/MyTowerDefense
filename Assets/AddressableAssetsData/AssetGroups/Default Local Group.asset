@@ -16,7 +16,87 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 5b8c271ba24890649bf93334f02cb50a
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 35e7c68d029a01647994cf1e28282b88
+    m_Address: Assassin_ActiveSkill
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3b49bdb496950d146a8905c1620fbd3e
+    m_Address: Assassin_Portrait
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 697eae3119ae08a4ab3fab4314a8de44
+    m_Address: Priest_PassiveSkill
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 72204cd556bf4a14e8c5b56c37fcd3cf
+    m_Address: Archer_ActiveSkill
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 826ca09b879d8f845a93f027b32a2694
+    m_Address: FireMage_Ultimate
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 874638dff5d346a4689623c6e6a592cd
+    m_Address: Assassin_PassiveSkill
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 98047eac22ebf6046a3e02d5ae755139
+    m_Address: Archer_PassiveSkill
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aa9bc183fc549bf488080ff2c71da448
+    m_Address: FireMage_PassiveSkill
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c7ff47c878a409b46a5726ee83b991c0
+    m_Address: Priest_Portrait
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca460e2727e4d704fbf360ad1ca66471
+    m_Address: FireMage_Portrait
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cd1ec76a11cc63248867bba16999694e
+    m_Address: Archer_Ultimate
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cdd6a0cb15a734e4e956def39ad1e658
+    m_Address: Priest_ActiveSkill
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d74305a145c1a994480fd9b9bccab0e7
+    m_Address: Assassin_Ultimate
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e44608371ed927044aa51f08e295fc76
+    m_Address: Priest_Ultimate
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e8fdf833e9194fa4ba4e735a380c87df
+    m_Address: Archer_Portrait
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f9a812683df188a478002dacb1477028
+    m_Address: FireMage_ActiveSkill
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 5e611f84b4f783e4fa28f55cb937abbc, type: 2}
   m_SchemaSet:

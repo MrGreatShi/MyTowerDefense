@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -32,6 +32,13 @@ public sealed class ObjectSelector : MonoBehaviour
 
     private void Update()
     {
+        if (SceneTransitionManager.Instance != null &&
+            SceneTransitionManager.Instance.IsInputBlocked)
+        {
+            ClearHoveredObject();
+            return;
+        }
+
         if (selectionCamera == null)
         {
             return;

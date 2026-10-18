@@ -17,11 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: c1495f910f997254987160963ec65691
   m_SerializeEntries:
-  - m_GUID: 39065964735d5a64d8beec6fdb7ca8e3
-    m_Address: Knight_ActiveSkill
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6bd7f0c662b4d54459b174805c0acb41
     m_Address: Knight_PassiveSkill
     m_ReadOnly: 0

@@ -18,7 +18,12 @@ MonoBehaviour:
   m_GUID: 524d3c0161b273c4a94971e5a2bc8a02
   m_SerializeEntries:
   - m_GUID: 3555e8695e359f94285c544aab2158b5
-    m_Address: Knight_Prefab
+    m_Address: Knight
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 39065964735d5a64d8beec6fdb7ca8e3
+    m_Address: Knight_ActiveSkill
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

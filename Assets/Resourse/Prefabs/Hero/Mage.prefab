@@ -692,6 +692,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3972964382682025698, guid: 9b551562a7704a69bb4b5a781408b6a2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8213224821873181654}
+    - targetCorrespondingSourceObject: {fileID: 3972964382682025698, guid: 9b551562a7704a69bb4b5a781408b6a2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4407151686013429238}
   m_SourcePrefab: {fileID: 100100000, guid: 9b551562a7704a69bb4b5a781408b6a2, type: 3}
 --- !u!1 &706010538303026477 stripped
 GameObject:
@@ -733,7 +736,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ca21fa32e2b14341ae47e2876d798bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  key: 
+  key: Mage
   health: 0
   maxHealth: 100
   physicalDefense: 5
@@ -768,9 +771,9 @@ MonoBehaviour:
   preState: 0
   NeedTargetForA_Skill: 0
   NeedTargetForUltimate: 1
-  attackEffect: {fileID: 0}
-  aSkillEffect: {fileID: 0}
-  ultimateEffectCount: {fileID: 0}
+  attackEffect: {fileID: 7566011964207851045, guid: a15a71c560980d24193f22674502eeea, type: 3}
+  aSkillEffect: {fileID: 4619125875982343799, guid: b455fcd936417da47985c2dd6602e480, type: 3}
+  ultimateEffectCount: {fileID: 2734816134589122729, guid: f3049b04748d6294497c752dd9e757dc, type: 3}
   _activeSkillEffectLifetime: 0.3
   _activeSkillForwardOffset: 0.6
 --- !u!114 &6444550182820305662
@@ -806,3 +809,15 @@ MonoBehaviour:
   invalidTargetColor: {r: 1, g: 0.2, b: 0.2, a: 1}
   colorBlend: 0.45
   emissionIntensity: 0.6
+--- !u!114 &4407151686013429238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 706010538303026477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89364b33d6d296445a93579d2ed51d11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

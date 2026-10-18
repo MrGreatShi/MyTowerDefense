@@ -1,15 +1,29 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using UnityEngine.EventSystems;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using MyTowerDefense.Util;
 
+/// <summary>
+/// 显示当前英雄状态与技能操作 UI。
+/// 修改记录：2026-10-12，统一使用 UISpriteUtility，并按窗口生命周期取消换图请求。
+/// </summary>
 public class LevelHeroWindow : UIWindow
 {
     public override string Key => "UI/LevelHeroWindow";
     public HeroBase heroBase;
     public Image portrait;
     public Image healthBar;
+    public TextMeshProUGUI healthText;
+    public TextMeshProUGUI attackText;
+    public TextMeshProUGUI speedText;
+    public TextMeshProUGUI phsicalDefenseText;
+    public TextMeshProUGUI magicDefenseText;
     public Image passiveSkillLabel;
     public Image passiveSkillMask;
     public Button passiveSkillUpgradeBtn;
@@ -19,20 +33,52 @@ public class LevelHeroWindow : UIWindow
     public Button ultimateLabel;
     public Image ultimateMask;
     public Button ultimateUpgradeBtn;
-    readonly AddressablesLoader<Sprite> loader = new AddressablesLoader<Sprite>();
-    public override void OnCreate() 
-    { 
+    // 只控制本轮 UI 赋值，不取消或释放 SpriteLoader 的共享资源加载。
+    private CancellationTokenSource _spriteLoadCancellation;
 
-    }
-    public override async void OnShow(object args) 
+    /// <summary>切换英雄后，并发加载头像和三个技能图标。</summary>
+    public override async void OnShow(object args)
     {
-        if(args is HeroBase hero)
+        CancelSpriteLoading();
+        heroBase = args as HeroBase;
+        portrait.SetSprite(null);
+        passiveSkillLabel.SetSprite(null);
+        activeSkillLabel.SetSprite(null);
+        ultimateLabel.SetSprite(null);
+
+        if (heroBase == null)
         {
-            heroBase = hero;
-            portrait.sprite = await LoadSprite(hero.key + "_Portrait");
-            passiveSkillLabel.sprite = await LoadSprite(hero.key + "_PassiveSkill");
-            SetButtonSprite(activeSkillLabel, await LoadSprite(hero.key + "_ActiveSkill"));
-            SetButtonSprite(ultimateLabel, await LoadSprite(hero.key + "_Ultimate"));
+            return;
+        }
+
+        _spriteLoadCancellation = new CancellationTokenSource();
+        // 捕获本轮 Token，旧请求结束时不能读取新一轮的取消源。
+        CancellationToken cancellationToken = _spriteLoadCancellation.Token;
+        string key = heroBase.key;
+        if (speedText != null)
+        {
+            speedText.text = heroBase.defaultMoveSpeed.ToString();
+        }
+
+        try
+        {
+            // 工具类检查迟到请求和目标销毁；单张失败不阻止其他图片显示。
+            await Task.WhenAll(
+                portrait.SetSpriteAsync(key + "_Portrait", cancellationToken: cancellationToken),
+                passiveSkillLabel.SetSpriteAsync(key + "_PassiveSkill", cancellationToken: cancellationToken),
+                activeSkillLabel.SetSpriteAsync(key + "_ActiveSkill", cancellationToken: cancellationToken),
+                ultimateLabel.SetSpriteAsync(key + "_Ultimate", cancellationToken: cancellationToken));
+        }
+        catch (OperationCanceledException)
+        {
+            // 窗口关闭或缓存清理是正常取消，不作为未处理异常。
+        }
+        catch (Exception exception)
+        {
+            if (this != null && !cancellationToken.IsCancellationRequested)
+            {
+                Debug.LogException(exception, this);
+            }
         }
     }
     /// <summary>
@@ -42,6 +88,10 @@ public class LevelHeroWindow : UIWindow
     {
         if(heroBase == null) return;
         healthBar.fillAmount = (float)heroBase.health / heroBase._maxHealth;
+        healthText.text = $"{heroBase.health}/{heroBase._maxHealth}";
+        attackText.text = heroBase._attack.ToString();
+        phsicalDefenseText.text = heroBase._physicalDefense.ToString();
+        magicDefenseText.text = heroBase._magicDefense.ToString();
         passiveSkillMask.fillAmount = heroBase.passiveSkillCooldownPersent;
         activeSkillMask.fillAmount = heroBase.activeSkillCooldownPersent;
         ultimateMask.fillAmount = heroBase.ultimateCooldownPersent;
@@ -97,21 +147,43 @@ public class LevelHeroWindow : UIWindow
             ultimateUpgradeBtn.gameObject.SetActive(false);
         }
     }
-    async System.Threading.Tasks.Task<Sprite> LoadSprite(string key)
+    /// <summary>隐藏窗口时阻止未完成的图片请求继续赋值。</summary>
+    public override void OnHide()
     {
-        var handle = await loader.LoadPrefabHandleAsync(key);
-        return handle.Result;
+        CancelSpriteLoading();
+        heroBase = null;
     }
 
-    void SetButtonSprite(Button button, Sprite sprite)
-    {
-        if (button != null && button.targetGraphic is Image image)
-            image.sprite = sprite;
-    }
-    public override void OnHide() { }
+    /// <summary>GUIManager 销毁窗口时终止本窗口换图请求，不释放公共资源。</summary>
     public override void OnDestroyWindow()
     {
-        loader.ReleaseAll();
+        CancelSpriteLoading();
+        heroBase = null;
+    }
+
+    private void OnDisable()
+    {
+        CancelSpriteLoading();
+        heroBase = null;
+    }
+
+    private void OnDestroy()
+    {
+        CancelSpriteLoading();
+        heroBase = null;
+    }
+
+    private void CancelSpriteLoading()
+    {
+        CancellationTokenSource cancellation = _spriteLoadCancellation;
+        _spriteLoadCancellation = null;
+        if (cancellation == null)
+        {
+            return;
+        }
+
+        cancellation.Cancel();
+        cancellation.Dispose();
     }
     void OnActiveSkillBtnClick()
     {

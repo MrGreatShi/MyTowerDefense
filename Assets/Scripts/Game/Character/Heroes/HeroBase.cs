@@ -82,8 +82,6 @@ public abstract class HeroBase : CharacterBase, ISelectionActionSource
             if (reviveTimer >= reviveTime)
             {
                 reviveTimer = 0f;
-                anim.SetTrigger(reviveAnimTrigger);
-                state = CharacterState.Appearing;
                 Appear();
                 Reset();
             }
@@ -119,6 +117,8 @@ public abstract class HeroBase : CharacterBase, ISelectionActionSource
     protected override void Appear()
     {
         this.gameObject.SetActive(true);
+        anim.SetTrigger(reviveAnimTrigger);
+        state = CharacterState.Appearing;
     }
     protected void CalculateTimer()
     {
@@ -139,6 +139,8 @@ public abstract class HeroBase : CharacterBase, ISelectionActionSource
         {
             if((this.transform.position - destination).sqrMagnitude <= 0.0001f)
             {
+                // 精确落在目标格中心，消除到达容差造成的残余偏移。
+                this.transform.position = destination;
                 state = CharacterState.Idle;
                 movingSpeed = 0f;
                 anim.SetBool(moveAnimBool, false);
@@ -148,8 +150,8 @@ public abstract class HeroBase : CharacterBase, ISelectionActionSource
             }
             else
             {
+                // 目标格已在接收指令时占据，途中不登记路径格，也不因路径格占据而停在边界。
                 this.transform.position = Vector3.MoveTowards(this.transform.position, destination, movingSpeed * Time.deltaTime);
-                RefreshCubeOccupancy();
                 UpdateSphere();
                 return;
             }
@@ -183,6 +185,12 @@ public abstract class HeroBase : CharacterBase, ISelectionActionSource
     /// </summary>
     protected void RefreshCubeOccupancy()
     {
+        // 移动中占用信息表示目标格，而非表现模型当前经过的格子。
+        if (state == CharacterState.Moving)
+        {
+            return;
+        }
+
         CubeGridManager gridManager = CubeGridManager.Instance;
         if (gridManager == null ||
             !gridManager.TryGetCubeOccupancyAtWorldPosition(
@@ -199,11 +207,13 @@ public abstract class HeroBase : CharacterBase, ISelectionActionSource
             return;
         }
 
-        ClearCubeOccupancy();
-        if (!nextCubeOccupancy.Register(transform))
+        // 新格拒绝登记时保留旧格记录；登记成功后才释放旧格。
+        if (!nextCubeOccupancy.Register(transform) && !nextCubeOccupancy.Contains(transform))
         {
             return;
         }
+
+        ClearCubeOccupancy();
 
         _currentCube = nextCube;
         _currentCubeOccupancy = nextCubeOccupancy;
@@ -253,6 +263,14 @@ public abstract class HeroBase : CharacterBase, ISelectionActionSource
     {
         if (!IsFree()) return;
 
+        CubeGridManager gridManager = CubeGridManager.Instance;
+        if (gridManager == null ||
+            !gridManager.TryGetCubeOccupancyAtWorldPosition(new Vector3(x, 0f, y), out Transform targetCube, out CubeOccupancy occupancy) ||
+            occupancy.IsFrozen || !occupancy.CanOccupy(transform))
+        {
+            return;
+        }
+
         RaycastHit[] hits = Physics.RaycastAll(this.transform.position, this.transform.forward, 30f);
         foreach (RaycastHit hit in hits)
         {
@@ -262,14 +280,28 @@ public abstract class HeroBase : CharacterBase, ISelectionActionSource
                 return;
             }
         }
+        // 全部指令校验结束后，先占据目标格，再释放原格；其他英雄立即能看到该占用。
+        if (!occupancy.Contains(transform) && !occupancy.Register(transform))
+        {
+            return;
+        }
+        if (_currentCubeOccupancy != occupancy)
+        {
+            ClearCubeOccupancy();
+        }
+        _currentCube = targetCube;
+        _currentCubeOccupancy = occupancy;
+        destination = new Vector3(targetCube.position.x, transform.position.y, targetCube.position.z);
         state = CharacterState.Moving;
         if (anim != null)
         {
             anim.SetBool(moveAnimBool, true);
         }
         movingSpeed = defaultMoveSpeed;
-        destination = new Vector3(x, 0, y);
-        this.transform.LookAt(destination);
+        if ((destination - transform.position).sqrMagnitude > 0.0001f)
+        {
+            this.transform.LookAt(destination);
+        }
     }
     public bool IsFree()
     {

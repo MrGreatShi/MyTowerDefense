@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06b826ca2d4371e4d8710740d0550933, type: 3}
+  m_Name: Mage
+  m_EditorClassIdentifier: 
+  Key: 1
+  heroName: Mage
+  health: 100
+  attack: 15
+  attackRange: 20
+  physicalDefense: 5
+  magicDefense: 20
+  speed: 1
+  passiveSkillDescription: "\u6CD5\u5E08\u88AB\u52A8\u6280\u80FD"
+  activeSkillDescription: "\u6CD5\u5E08\u4E3B\u52A8\u6280\u80FD"
+  ultimateDescription: "\u6CD5\u5E08\u7EC8\u6781\u6280\u80FD"
+  talent_0Description:
+  - "\u6CD5\u5E08\u5929\u8D4B1\u5206\u652F1"
+  - "\u6CD5\u5E08\u5929\u8D4B1\u5206\u652F2"
+  talent_1Description:
+  - "\u6CD5\u5E08\u5929\u8D4B2\u5206\u652F1"
+  - "\u6CD5\u5E08\u5929\u8D4B2\u5206\u652F2"
+  talent_2Description:
+  - "\u6CD5\u5E08\u5929\u8D4B3\u5206\u652F1"
+  - "\u6CD5\u5E08\u5929\u8D4B3\u5206\u652F2"
+  talent_3Description:
+  - "\u6CD5\u5E08\u5929\u8D4B4\u5206\u652F1"
+  - "\u6CD5\u5E08\u5929\u8D4B4\u5206\u652F2"

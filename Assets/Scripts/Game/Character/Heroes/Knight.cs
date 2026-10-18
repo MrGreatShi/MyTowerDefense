@@ -30,7 +30,10 @@ public class Knight : HeroBase
         }
         if(preState == HeroPreState.NoPre && target.SelectionRoot.CompareTag("Cube"))
         {
-            return true;
+            CubeGridManager gridManager = CubeGridManager.Instance;
+            return gridManager != null &&
+                gridManager.TryGetCubeOccupancyAtWorldPosition(target.SelectionRoot.position, out _, out CubeOccupancy occupancy) &&
+                !occupancy.IsFrozen && occupancy.CanOccupy(transform);
         }
         return false;
     }
