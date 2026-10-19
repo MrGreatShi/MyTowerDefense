@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MyTowerDefense.Managers;
 using UnityEngine;
 
 namespace MyTowerDefense.Game
@@ -9,6 +10,7 @@ namespace MyTowerDefense.Game
     /// Game 模块：负责开局英雄资源加载、按地块部署及实例清理，不负责关卡状态。
     /// 创建日期：2026-10-08。
     /// 修改记录：从 RunSession 拆离英雄部署，保持原有出生位置及占用规则。
+    /// 修改记录：2026-10-18，统一预加载英雄配置，在未激活状态下注入属性后再启用。
     /// </summary>
     /// <remarks>由关卡会话持有，无需挂载。所有方法须在 Unity 主线程调用。</remarks>
     public sealed class HeroDeploymentService : IDisposable
@@ -17,6 +19,8 @@ namespace MyTowerDefense.Game
         private readonly Transform _parent;
         private readonly AddressablesLoader<GameObject> _loader = new AddressablesLoader<GameObject>();
         private readonly List<GameObject> _spawnedHeroes = new List<GameObject>();
+        // 只在部署期间存在；保证 Instantiate 不提前执行英雄的 Awake / OnEnable。
+        private GameObject _stagingRoot;
         private bool _isDeploying;
         private bool _isDeployed;
         private bool _isDisposed;
@@ -29,7 +33,7 @@ namespace MyTowerDefense.Game
         }
 
         /// <summary>
-        /// 先验证全部 Prefab，再从左到右、每列从上到下部署；失败时回滚本轮实例。
+        /// 先验证全部 Prefab 和共享配置，再从左到右、每列从上到下部署；失败时回滚本轮实例。
         /// </summary>
         /// <param name="addresses">英雄 Address 列表；null 或空列表视为成功。</param>
         /// <param name="gridManager">已在 Awake 缓存场景地块的网格管理器。</param>
@@ -55,9 +59,14 @@ namespace MyTowerDefense.Game
                 if (gridManager == null || gridManager.ColumnCount == 0 || gridManager.RowCount == 0)
                     throw new InvalidOperationException("英雄部署失败：方块网格未初始化或为空。");
 
+                GameDataManager dataManager = GameDataManager.Instance;
+                if (dataManager == null)
+                    throw new InvalidOperationException("英雄部署失败：Core 中没有有效的 GameDataManager。");
+
                 // 快照避免 Inspector 在等待资源期间修改配置，改变本轮阵容及顺序。
                 List<string> snapshot = new List<string>(addresses);
                 List<GameObject> prefabs = new List<GameObject>(snapshot.Count);
+                List<HeroSettingConfig> configs = new List<HeroSettingConfig>(snapshot.Count);
                 foreach (string address in snapshot)
                 {
                     if (string.IsNullOrWhiteSpace(address))
@@ -69,13 +78,24 @@ namespace MyTowerDefense.Game
                         return false;
 
                     GameObject prefab = handle.Result;
-                    if (prefab == null || !prefab.activeSelf || prefab.GetComponent<HeroBase>() == null)
-                        throw new InvalidOperationException($"英雄 Prefab 无效：{address}。根节点需挂载 HeroBase 且处于启用状态。");
+                    HeroBase prefabHero = prefab == null ? null : prefab.GetComponent<HeroBase>();
+                    if (prefab == null || !prefab.activeSelf || prefabHero == null || !prefabHero.enabled)
+                        throw new InvalidOperationException($"英雄 Prefab 无效：{address}。根节点及 HeroBase 组件均需启用。");
+
+                    // 使用和详情完全相同的查询规则；缓存及 SO 句柄归数据管理器持有。
+                    HeroSettingConfig config = await dataManager.GetHeroConfigAsync(address);
+                    if (_isDisposed || _parent == null || !_parent.gameObject.activeInHierarchy)
+                        return false;
                     prefabs.Add(prefab);
+                    configs.Add(config);
                 }
 
                 if (gridManager == null)
                     throw new InvalidOperationException("英雄部署失败：加载期间网格已销毁。");
+
+                _stagingRoot = new GameObject("HeroDeployment_Staging");
+                _stagingRoot.SetActive(false);
+                _stagingRoot.transform.SetParent(_parent, false);
 
                 int heroIndex = 0;
                 for (int columnOffset = 0; columnOffset < gridManager.ColumnCount; columnOffset++)
@@ -97,10 +117,17 @@ namespace MyTowerDefense.Game
                         Vector3 position = new Vector3(cube.position.x, 0f, cube.position.z);
                         // 开局低频创建；不引入对象池。位置为世界坐标，朝向世界 +X。
                         GameObject hero = UnityEngine.Object.Instantiate(prefabs[heroIndex], position,
-                            Quaternion.LookRotation(Vector3.right, Vector3.up), _parent);
+                            Quaternion.LookRotation(Vector3.right, Vector3.up), _stagingRoot.transform);
                         _spawnedHeroes.Add(hero);
+                        // 必须先在非激活层级下创建，随后保持自身关闭；Instantiate 后才关闭已太晚。
+                        hero.SetActive(false);
+                        hero.transform.SetParent(_parent, true);
+                        HeroBase heroBase = hero.GetComponent<HeroBase>();
+                        heroBase.Initialize(configs[heroIndex]);
+                        hero.SetActive(true);
                         // HeroBase.OnEnable 负责占用登记，服务只检查结果，不维护第二份占用。
-                        if (_isDisposed || hero == null || occupancy == null || occupancy.StationaryOccupant != hero.transform)
+                        if (_isDisposed || hero == null || !hero.activeInHierarchy || !heroBase.isActiveAndEnabled ||
+                            occupancy == null || occupancy.StationaryOccupant != hero.transform)
                             throw new InvalidOperationException($"英雄 {snapshot[heroIndex]} 未成功登记地块 ({column}, {row})。");
                         heroIndex++;
                     }
@@ -121,6 +148,7 @@ namespace MyTowerDefense.Game
             finally
             {
                 _isDeploying = false;
+                ClearStagingRoot();
                 if (_isDisposed || !_isDeployed)
                 {
                     ClearSpawnedHeroes();
@@ -142,9 +170,19 @@ namespace MyTowerDefense.Game
                 UnityEngine.Object.Destroy(hero);
             }
             _spawnedHeroes.Clear();
+            ClearStagingRoot();
             _isDeployed = false;
             // 尚在 await 中时不能清除加载器的在途任务；由 DeployAsync.finally 收尾。
             if (!_isDeploying) _loader.ReleaseAll();
+        }
+
+        private void ClearStagingRoot()
+        {
+            if (_stagingRoot != null)
+            {
+                UnityEngine.Object.Destroy(_stagingRoot);
+                _stagingRoot = null;
+            }
         }
 
         /// <summary>结束服务生命周期；可重复调用，后续不再接受部署请求。</summary>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using MyTowerDefense.Data;
+using MyTowerDefense.Managers;
 using MyTowerDefense.Util;
 using System;
 using System.Threading;
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 /// <summary>
 /// 关卡准备界面，展示可选英雄及配置。
 /// 修改记录：2026-10-12，列表头像使用 UISpriteUtility，并阻止关闭后的迟到请求。
-/// 修改记录：2026-10-12，移除旧兼容入口，统一读取 GameData 的英雄目录。
+/// 修改记录：2026-10-19，直接读取 GameDataManager 的只读英雄目录，并等待其初始化。
 /// </summary>
 public class LevelPrepareWindow : UIWindow
 {
@@ -40,15 +40,35 @@ public class LevelPrepareWindow : UIWindow
 
         try
         {
-            await LoadSelectionList(cancellationToken);
-            // await 后可能已关闭、销毁或重新打开，不得再执行旧一轮初始化。
-            if (this == null || cancellationToken.IsCancellationRequested ||
-                !isActiveAndEnabled || !IsVisible)
+            GameDataManager dataManager = GameDataManager.Instance;
+            if (dataManager == null)
+            {
+                throw new InvalidOperationException("准备窗口需要 Core 中的 GameDataManager。");
+            }
+
+            if (!await dataManager.EnsureInitializedAsync())
+            {
+                throw new InvalidOperationException("游戏目录初始化失败，无法显示准备窗口。");
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+            if (this == null || !isActiveAndEnabled || !IsVisible ||
+                dataManager == null || !dataManager.IsReady)
             {
                 return;
             }
 
-            InitHeroInfo();
+            // 同一次显示始终使用同一个目录快照，不在等待图片后切到另一份全局数据。
+            IReadOnlyList<string> heroCatalog = dataManager.Heroes;
+            await LoadSelectionList(heroCatalog, cancellationToken);
+            // await 后可能已关闭、销毁或重新打开，不得再执行旧一轮初始化。
+            if (this == null || cancellationToken.IsCancellationRequested ||
+                !isActiveAndEnabled || !IsVisible || dataManager == null || !dataManager.IsReady)
+            {
+                return;
+            }
+
+            InitHeroInfo(heroCatalog);
             InitHeroInfoBars();
             BattleBtn.onClick.AddListener(OnBattleBtnClick);
         }
@@ -124,10 +144,11 @@ public class LevelPrepareWindow : UIWindow
     }
     public void OnExitBtnClick()
     {
+        GUIManager.Instance.Hide(Key);
     }
-    private async Task LoadSelectionList(CancellationToken cancellationToken)
+    private async Task LoadSelectionList(IReadOnlyList<string> heroCatalog, CancellationToken cancellationToken)
     {
-        foreach(string hero in GameData.Heroes)
+        foreach(string hero in heroCatalog)
         {
             // 检查放在生成列表项之前，关闭窗口后不再生成后续项目。
             if (this == null || cancellationToken.IsCancellationRequested ||
@@ -141,9 +162,8 @@ public class LevelPrepareWindow : UIWindow
             await image.SetSpriteAsync(hero + "_Portrait", cancellationToken: cancellationToken);
         }
     }
-    private void InitHeroInfo() 
+    private void InitHeroInfo(IReadOnlyList<string> heroCatalog)
     {
-        IReadOnlyList<string> heroCatalog = GameData.Heroes;
         if (heroCatalog.Count == 0)
         {
             Debug.LogWarning("英雄目录为空，已跳过随机英雄初始化，请检查 GameCatalogConfig。", this);

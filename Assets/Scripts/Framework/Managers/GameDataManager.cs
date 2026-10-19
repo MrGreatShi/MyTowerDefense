@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using MyTowerDefense.Data;
@@ -7,15 +9,17 @@ using UnityEngine;
 namespace MyTowerDefense.Managers
 {
     /// <summary>
-    /// 职责：在 Core 中独立管理游戏目录配置初始化及发布者生命周期。
+    /// 职责：在 Core 中统一管理只读游戏目录、SO 资源查询和缓存生命周期。
     /// 模块：Managers；创建日期：2026-10-12；修改记录：首次实现。
     /// 修改记录：2026-10-12，按 Address 获取共享 ScriptableObject 配置并统一管理句柄生命周期。
+    /// 修改记录：2026-10-18，提供英雄配置的统一地址规则与基础属性校验。
+    /// 修改记录：2026-10-19，统一持有目录快照、查询与初始化状态。
     /// 不处理场景切换、UI、玩家存档或资源预加载；Core 不卸载，无需再持久化对象。
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class GameDataManager : MonoBehaviour
     {
-        /// <summary>本轮唯一有效的数据管理器；业务查询应优先使用 GameData。</summary>
+        /// <summary>Core 中唯一有效的数据管理器；目录和配置统一通过此实例访问。</summary>
         public static GameDataManager Instance { get; private set; }
 
         [Header("全局目录配置")]
@@ -24,6 +28,13 @@ namespace MyTowerDefense.Managers
 
         private Task<bool> _initializationTask;
         private bool _isRejected;
+        private bool _isInitialized;
+
+        // 快照独立于 SO 源列表；HashSet 只服务查询，不影响 Inspector 中的展示顺序。
+        private ReadOnlyCollection<string> _heroes;
+        private ReadOnlyCollection<string> _equipments;
+        private HashSet<string> _heroKeys;
+        private HashSet<string> _equipmentKeys;
 
         // 同一 Address 的不同泛型查询共享一个基类缓存，不重复持有加载句柄。
         private readonly AddressablesLoader<ScriptableObject> _scriptableAssetLoader =
@@ -32,9 +43,43 @@ namespace MyTowerDefense.Managers
         // 配置缓存所属运行周期；清理时递增，阻止旧请求向新周期交付结果。
         private int _assetGeneration;
 
-        /// <summary>本实例仍为有效发布者，且全部目录已初始化。</summary>
-        public bool IsReady => this != null && !_isRejected &&
-            Instance == this && GameData.IsOwnedBy(this);
+        /// <summary>本实例启用、仍为有效单例，且全部目录均已校验完成。</summary>
+        public bool IsReady => this != null && isActiveAndEnabled && !_isRejected &&
+            Instance == this && _isInitialized;
+
+        /// <summary>按配置顺序排列的英雄 Key 快照；未就绪时抛出明确异常。</summary>
+        public IReadOnlyList<string> Heroes
+        {
+            get
+            {
+                EnsureReady();
+                return _heroes;
+            }
+        }
+
+        /// <summary>按配置顺序排列的装备 Key 快照，不暴露 SO 内部可修改的 List。</summary>
+        public IReadOnlyList<string> Equipments
+        {
+            get
+            {
+                EnsureReady();
+                return _equipments;
+            }
+        }
+
+        /// <summary>按区分大小写的完整 Key 查询英雄；空 Key 返回 false，未就绪则抛出异常。</summary>
+        public bool ContainsHero(string key)
+        {
+            EnsureReady();
+            return !string.IsNullOrWhiteSpace(key) && _heroKeys.Contains(key);
+        }
+
+        /// <summary>按区分大小写的完整 Key 查询装备；空 Key 返回 false，未就绪则抛出异常。</summary>
+        public bool ContainsEquipment(string key)
+        {
+            EnsureReady();
+            return !string.IsNullOrWhiteSpace(key) && _equipmentKeys.Contains(key);
+        }
 
         private void Awake()
         {
@@ -73,11 +118,24 @@ namespace MyTowerDefense.Managers
             _initializationTask = completion.Task;
             try
             {
-                GameData.Initialize(_catalogConfig, this);
+                if (_catalogConfig == null)
+                {
+                    throw new InvalidOperationException("GameDataManager 未绑定有效的 GameCatalogConfig。");
+                }
+
+                // 两个目录都构建成功后再发布，任何一项无效都不能留下半初始化状态。
+                ReadOnlyCollection<string> heroes = CreateSnapshot(_catalogConfig.HeroKeys, "英雄", out var heroKeys);
+                ReadOnlyCollection<string> equipments = CreateSnapshot(_catalogConfig.EquipmentKeys, "装备", out var equipmentKeys);
+                _heroes = heroes;
+                _equipments = equipments;
+                _heroKeys = heroKeys;
+                _equipmentKeys = equipmentKeys;
+                _isInitialized = true;
                 completion.TrySetResult(true);
             }
             catch (Exception exception)
             {
+                ClearCatalog();
                 Debug.LogException(exception, this);
                 completion.TrySetResult(false);
             }
@@ -153,6 +211,98 @@ namespace MyTowerDefense.Managers
                 $"Address='{address}' 的实际类型为 {asset.GetType().Name}，不能作为 {typeof(T).Name} 返回。");
         }
 
+        /// <summary>
+        /// 按英雄资源标识取得共享基础配置；详情和部署必须使用同一个查询入口。
+        /// 返回资产只读使用，战斗状态不得写回配置。必须在 Unity 主线程调用。
+        /// </summary>
+        /// <param name="heroKey">英雄 Prefab 的资源标识，例如 Knight；不是中文显示名或数值 Key。</param>
+        /// <param name="cancellationToken">仅取消本次结果交付，不释放共享缓存。</param>
+        /// <returns>Address 为 heroKey + "_Setting" 的有效基础配置。</returns>
+        public async Task<HeroSettingConfig> GetHeroConfigAsync(
+            string heroKey,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(heroKey))
+            {
+                throw new ArgumentException("英雄资源标识不能为空。", nameof(heroKey));
+            }
+
+            string address = heroKey + "_Setting";
+            int generation = _assetGeneration;
+            HeroSettingConfig config = await LoadScriptableAssetAsync<HeroSettingConfig>(
+                address, cancellationToken);
+
+            // 本包装方法本身也有 await；继续执行时需再次核对所属周期及调用者取消。
+            ValidateAssetRequest(generation, cancellationToken);
+            if (config == null)
+            {
+                throw new InvalidOperationException($"英雄配置 '{address}' 已被销毁。");
+            }
+
+            // 在创建任何英雄前即可发现非法数值；详情也不会显示另一套兜底数值。
+            if (config.health <= 0 || config.attack < 0 || config.attackRange < 0 ||
+                config.physicalDefense < 0 || config.magicDefense < 0 || config.speed < 0)
+            {
+                throw new InvalidOperationException(
+                    $"英雄配置 '{address}' 无效：生命必须大于 0，攻击、范围、双防和移速不能为负数。");
+            }
+
+            return config;
+        }
+
+        private static ReadOnlyCollection<string> CreateSnapshot(
+            IReadOnlyList<string> source, string category, out HashSet<string> keys)
+        {
+            if (source == null)
+            {
+                throw new InvalidOperationException($"{category}目录为 null，请检查配置资产。");
+            }
+
+            keys = new HashSet<string>(StringComparer.Ordinal);
+            var items = new List<string>(source.Count);
+            for (int i = 0; i < source.Count; i++)
+            {
+                string key = source[i];
+                if (string.IsNullOrWhiteSpace(key))
+                {
+                    throw new InvalidOperationException($"{category}目录 Element {i} 的 Key 为空。");
+                }
+
+                // 不自动 Trim，避免悄悄改写 Addressables 资源标识。
+                if (!string.Equals(key, key.Trim(), StringComparison.Ordinal))
+                {
+                    throw new InvalidOperationException($"{category} Key '{key}' 含首尾空格，请修正配置。");
+                }
+
+                if (!keys.Add(key))
+                {
+                    throw new InvalidOperationException($"{category}目录存在重复 Key：'{key}'。");
+                }
+
+                items.Add(key);
+            }
+
+            return items.AsReadOnly();
+        }
+
+        private void EnsureReady()
+        {
+            if (!IsReady)
+            {
+                throw new InvalidOperationException(
+                    "GameDataManager 尚未就绪。请从 Core 启动，并等待 EnsureInitializedAsync 成功后读取目录。");
+            }
+        }
+
+        private void ClearCatalog()
+        {
+            _isInitialized = false;
+            _heroes = null;
+            _equipments = null;
+            _heroKeys = null;
+            _equipmentKeys = null;
+        }
+
         private void ValidateAssetRequest(int generation, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -177,16 +327,16 @@ namespace MyTowerDefense.Managers
         private void OnDestroy()
         {
             _isRejected = true;
+            ClearCatalog();
+            _initializationTask = null;
             // 每个实例只清理自己的加载器；重复组件不能释放有效实例的资源。
             ClearScriptableAssets();
-            if (Instance != this)
+            if (!ReferenceEquals(Instance, this))
             {
                 return;
             }
 
-            GameData.Release(this);
             Instance = null;
-            _initializationTask = null;
         }
         /// <summary>
         /// 在编辑器中 Play 模式切换或运行时重载时，清理本轮静态状态；避免残留数据影响下一轮。
@@ -199,6 +349,7 @@ namespace MyTowerDefense.Managers
             {
                 // 缓存释放期间拒绝重入请求，不能让请求混入尚未结束的重置过程。
                 manager._isRejected = true;
+                manager.ClearCatalog();
                 manager.ClearScriptableAssets();
                 manager._initializationTask = null;
                 manager._isRejected = false;

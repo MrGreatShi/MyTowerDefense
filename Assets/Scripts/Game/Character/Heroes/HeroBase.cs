@@ -1,10 +1,58 @@
+﻿using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using MyTowerDefense.Game;
 
+/// <summary>
+/// 英雄的战斗状态、占地与技能入口；基础属性由部署方在激活前注入。
+/// 修改记录：2026-10-18，统一使用 HeroSettingConfig，不在角色内异步加载资源。
+/// </summary>
 public abstract class HeroBase : CharacterBase, ISelectionActionSource
 {
+    private HeroSettingConfig _config;
+
+    /// <summary>当前英雄使用的共享只读配置；不得向其中写入血量、冷却或临时加成。</summary>
+    public HeroSettingConfig Config => _config;
+
+    /// <summary>是否已在未激活状态下完成基础属性注入，默认 false。</summary>
+    public bool IsInitialized { get; private set; }
+
+    /// <summary>
+    /// 在对象未激活时同步应用基础配置，不依赖尚未执行的 Awake 或 Animator 缓存。
+    /// 激活后的 OnEnable 负责按最终最大生命重置状态、播放出场动画及登记占地。
+    /// </summary>
+    /// <param name="config">由 GameDataManager 取得的有效配置，仅借用，不释放或修改。</param>
+    public void Initialize(HeroSettingConfig config)
+    {
+        if (gameObject.activeInHierarchy)
+        {
+            throw new InvalidOperationException("英雄必须在未激活时注入属性，再启用以执行 OnEnable。");
+        }
+
+        if (config == null)
+        {
+            throw new ArgumentNullException(nameof(config));
+        }
+
+        // 防御直接调用 Initialize 的入口；非法输入不能部分覆盖原有属性。
+        if (config.health <= 0 || config.attack < 0 || config.attackRange < 0 ||
+            config.physicalDefense < 0 || config.magicDefense < 0 || config.speed < 0)
+        {
+            throw new ArgumentException("英雄配置的生命必须大于 0，其他基础属性不能为负数。", nameof(config));
+        }
+
+        _config = config;
+        maxHealth = config.health;
+        attack = config.attack;
+        attackRange = config.attackRange;
+        physicalDefense = config.physicalDefense;
+        magicDefense = config.magicDefense;
+        defaultMoveSpeed = config.speed;
+        movingSpeed = 0f;
+        IsInitialized = true;
+    }
+
     protected readonly string attackAnimBool = "Attack";
     protected readonly string dieAnimTrigger = "Die";
     protected readonly string activeSkillAnimTrigger = "ASkill";
@@ -66,6 +114,15 @@ public abstract class HeroBase : CharacterBase, ISelectionActionSource
 
     protected override void OnEnable()
     {
+        if (!IsInitialized || _config == null)
+        {
+            // 不允许手摆或其他生成入口静默使用 Prefab 的旧数值进入战斗。
+            IsInitialized = false;
+            health = 0;
+            Debug.LogError($"英雄 '{key}' 未初始化：请在激活前调用 Initialize(config)。", this);
+            return;
+        }
+
         base.OnEnable();
         RefreshCubeOccupancy();
         UpdateSphere();
@@ -76,6 +133,11 @@ public abstract class HeroBase : CharacterBase, ISelectionActionSource
 
     protected override void Update()
     {
+        if (!IsInitialized)
+        {
+            return;
+        }
+
         if (state == CharacterState.Dead)
         {
             reviveTimer += Time.deltaTime;
@@ -305,7 +367,7 @@ public abstract class HeroBase : CharacterBase, ISelectionActionSource
     }
     public bool IsFree()
     {
-        return state == CharacterState.Idle || state == CharacterState.Attacking;
+        return IsInitialized && (state == CharacterState.Idle || state == CharacterState.Attacking);
     }
     public override void TakeDamage(int damage, AttackType attackType, IAttack attacker)
     {
